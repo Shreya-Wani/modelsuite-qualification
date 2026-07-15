@@ -22,6 +22,7 @@ const IconPlus = () => (
 
 const AdminDashboard = () => {
   const [tasks, setTasks]           = useState([]);
+  const [isLoading, setIsLoading]   = useState(true);
   const [showCreate, setShowCreate] = useState(false);
   const [editTask, setEditTask]     = useState(null);
   const [search, setSearch]         = useState('');
@@ -33,6 +34,8 @@ const AdminDashboard = () => {
       setTasks(data);
     } catch {
       alert('Failed to load tasks');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -156,7 +159,13 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <TasksTable tasks={filteredTasks} onEdit={setEditTask} onRefresh={loadTasks} />
+          {isLoading ? (
+            <div className="py-20 text-center animate-pulse" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '14px' }}>
+              Loading tasks...
+            </div>
+          ) : (
+            <TasksTable tasks={filteredTasks} onEdit={setEditTask} onRefresh={loadTasks} />
+          )}
         </div>
       </main>
 

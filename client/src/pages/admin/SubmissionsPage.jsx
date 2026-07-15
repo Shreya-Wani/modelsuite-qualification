@@ -11,6 +11,7 @@ const REVIEW_STATUS_CLASS = {
 
 const SubmissionsPage = () => {
   const [submissions, setSubmissions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [reviewTarget, setReviewTarget] = useState(null);
 
   const loadSubmissions = async () => {
@@ -19,6 +20,8 @@ const SubmissionsPage = () => {
       setSubmissions(data);
     } catch {
       alert('Failed to load submissions');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -68,7 +71,11 @@ const SubmissionsPage = () => {
             </span>
           </div>
 
-          {submissions.length === 0 ? (
+          {isLoading ? (
+            <div className="py-16 text-center animate-pulse text-text-faint text-[15px]">
+              Loading submissions...
+            </div>
+          ) : submissions.length === 0 ? (
             <div className="py-16 text-center text-text-faint text-[15px]">
               No submissions yet — talents will submit here.
             </div>

@@ -11,16 +11,20 @@ const TalentDashboard = () => {
   const { user } = useAuth();
   const [availableTasks, setAvailableTasks] = useState([]);
   const [myTasks, setMyTasks]               = useState([]);
+  const [isLoadingAvailable, setIsLoadingAvailable] = useState(true);
+  const [isLoadingMy, setIsLoadingMy] = useState(true);
   const [error, setError] = useState(null);
 
   const loadAvailable = async () => {
     try { const { data } = await fetchAvailableTasks(); setAvailableTasks(data); }
     catch { setError('Failed to load available tasks'); }
+    finally { setIsLoadingAvailable(false); }
   };
 
   const loadMyTasks = async () => {
     try { const { data } = await fetchMyTasks(); setMyTasks(data); }
     catch { setError('Failed to load your tasks'); }
+    finally { setIsLoadingMy(false); }
   };
 
   // eslint-disable-next-line
@@ -67,7 +71,13 @@ const TalentDashboard = () => {
               {availableTasks.length}
             </span>
           </div>
-          <AvailableTasksList tasks={availableTasks} onClaimed={handleRefresh} />
+          {isLoadingAvailable ? (
+            <div className="py-10 text-center animate-pulse" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
+              Loading available tasks...
+            </div>
+          ) : (
+            <AvailableTasksList tasks={availableTasks} onClaimed={handleRefresh} />
+          )}
         </section>
 
         {/* My Tasks */}
@@ -86,7 +96,13 @@ const TalentDashboard = () => {
               {myTasks.length}
             </span>
           </div>
-          <MyTasksList tasks={myTasks} onRefresh={handleRefresh} />
+          {isLoadingMy ? (
+            <div className="py-10 text-center animate-pulse" style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>
+              Loading my tasks...
+            </div>
+          ) : (
+            <MyTasksList tasks={myTasks} onRefresh={handleRefresh} />
+          )}
         </section>
       </main>
     </div>

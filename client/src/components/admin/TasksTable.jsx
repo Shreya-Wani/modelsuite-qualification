@@ -42,14 +42,20 @@ const STATUS_CLASS = {
   Revision:  'status-badge-Revision',
 };
 
+import { useState } from 'react';
+
 const TasksTable = ({ tasks, onEdit, onRefresh }) => {
+  const [deletingId, setDeletingId] = useState(null);
 
   const handleDelete = async (id) => {
+    setDeletingId(id);
     try {
       await deleteTask(id);
       onRefresh();
     } catch {
       alert('Failed to delete task');
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -147,8 +153,9 @@ const TasksTable = ({ tasks, onEdit, onRefresh }) => {
                   </button>
                   <button
                     onClick={() => handleDelete(task._id)}
+                    disabled={deletingId === task._id}
                     title="Delete task"
-                    className="action-btn action-btn-delete">
+                    className={`action-btn action-btn-delete ${deletingId === task._id ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     <IconDelete />
                   </button>
                 </div>

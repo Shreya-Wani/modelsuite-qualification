@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { createTask, fetchTalents } from '../../api/tasks';
 
 const STATUS_OPTIONS = ['Open', 'Claimed', 'Submitted', 'Approved', 'Rejected'];
@@ -10,6 +10,7 @@ const CreateTaskModal = ({ onClose, onCreated }) => {
   const [form, setForm] = useState({ title: '', description: '', status: 'Open', assignedTo: '', dueDate: '' });
   const [talents, setTalents] = useState([]);
   const [loadingTalents, setLoadingTalents] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   useState(() => {
     setLoadingTalents(true);
     fetchTalents()
@@ -22,12 +23,15 @@ const CreateTaskModal = ({ onClose, onCreated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const { data } = await createTask({ ...form, assignedTo: form.assignedTo || undefined });
       onCreated(data);
       onClose();
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to create task');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -90,9 +94,9 @@ const CreateTaskModal = ({ onClose, onCreated }) => {
               className="px-5 py-2.5 bg-bg-input text-text-muted border border-border rounded-lg text-sm font-medium cursor-pointer hover:bg-bg-hover hover:text-text-primary transition-all font-sans">
               Cancel
             </button>
-            <button type="submit"
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white cursor-pointer btn-gradient border-none font-sans">
-              Create Task
+            <button type="submit" disabled={isSubmitting}
+              className={`px-5 py-2.5 rounded-lg text-sm font-semibold text-white btn-gradient border-none font-sans ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}>
+              {isSubmitting ? 'Creating...' : 'Create Task'}
             </button>
           </div>
         </form>

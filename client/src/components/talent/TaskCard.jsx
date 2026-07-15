@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { claimTask } from '../../api/talent';
 
 const STATUS_CLASS = {
@@ -10,13 +11,17 @@ const STATUS_CLASS = {
 };
 
 const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
+  const [isClaiming, setIsClaiming] = useState(false);
 
   const handleClaim = async () => {
+    setIsClaiming(true);
     try {
       await claimTask(task._id);
       if (onClaimed) onClaimed();
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to claim task');
+    } finally {
+      setIsClaiming(false);
     }
   };
 
@@ -50,9 +55,9 @@ const TaskCard = ({ task, showClaimButton = false, onClaimed }) => {
       </div>
 
       {showClaimButton && (
-        <button onClick={handleClaim}
-          className="w-full py-2.5 rounded-lg border-none text-[13px] font-semibold text-white cursor-pointer btn-gradient font-sans mt-1">
-          Claim Task →
+        <button onClick={handleClaim} disabled={isClaiming}
+          className={`w-full py-2.5 rounded-lg border-none text-[13px] font-semibold text-white btn-gradient font-sans mt-1 ${isClaiming ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}>
+          {isClaiming ? 'Claiming...' : 'Claim Task →'}
         </button>
       )}
     </div>

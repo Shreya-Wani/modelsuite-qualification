@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { reviewSubmission } from '../../api/submissions';
 
 const REVIEW_STATUS_CLASS = {
@@ -8,14 +9,18 @@ const REVIEW_STATUS_CLASS = {
 };
 
 const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
+  const [isReviewing, setIsReviewing] = useState(false);
 
   const handleReview = async (status) => {
+    setIsReviewing(true);
     try {
       await reviewSubmission(submission._id, status);
       onReviewed();
       onClose();
     } catch (err) {
       alert(err.response?.data?.message || 'Review action failed');
+    } finally {
+      setIsReviewing(false);
     }
   };
 
@@ -102,20 +107,20 @@ const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
 
           {/* Action buttons */}
           <div className="flex gap-3 pt-1 border-t border-border mt-1">
-            <button onClick={onClose}
-              className="flex-1 py-2.5 bg-bg-input text-text-muted border border-border rounded-lg text-sm font-medium cursor-pointer hover:bg-bg-hover hover:text-text-primary transition-all font-sans">
+            <button onClick={onClose} disabled={isReviewing}
+              className={`flex-1 py-2.5 bg-bg-input text-text-muted border border-border rounded-lg text-sm font-medium transition-all font-sans ${isReviewing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-bg-hover hover:text-text-primary'}`}>
               Cancel
             </button>
-            <button onClick={() => handleReview('Rejected')}
-              className="flex-1 py-2.5 bg-danger/10 text-danger border border-danger/30 rounded-lg text-sm font-semibold cursor-pointer hover:bg-danger/20 transition-all font-sans">
+            <button onClick={() => handleReview('Rejected')} disabled={isReviewing}
+              className={`flex-1 py-2.5 bg-danger/10 text-danger border border-danger/30 rounded-lg text-sm font-semibold transition-all font-sans ${isReviewing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-danger/20'}`}>
               ✕ Reject
             </button>
-            <button onClick={() => handleReview('Revision')}
-              className="flex-1 py-2.5 bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-lg text-sm font-semibold cursor-pointer hover:bg-purple-500/20 transition-all font-sans">
+            <button onClick={() => handleReview('Revision')} disabled={isReviewing}
+              className={`flex-1 py-2.5 bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-lg text-sm font-semibold transition-all font-sans ${isReviewing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-purple-500/20'}`}>
               ↻ Request Revision
             </button>
-            <button onClick={() => handleReview('Approved')}
-              className="flex-1 py-2.5 bg-success/10 text-success border border-success/30 rounded-lg text-sm font-semibold cursor-pointer hover:bg-success/20 transition-all font-sans">
+            <button onClick={() => handleReview('Approved')} disabled={isReviewing}
+              className={`flex-1 py-2.5 bg-success/10 text-success border border-success/30 rounded-lg text-sm font-semibold transition-all font-sans ${isReviewing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-success/20'}`}>
               ✓ Approve
             </button>
           </div>

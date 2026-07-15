@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { updateTask, fetchTalents } from '../../api/tasks';
 
 const STATUS_OPTIONS = ['Open', 'Claimed', 'Submitted', 'Approved', 'Rejected'];
@@ -14,6 +14,7 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
     dueDate:     task.dueDate     || '',
   });
   const [talents, setTalents] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useState(() => {
     fetchTalents().then(({ data }) => setTalents(data)).catch(() => {});
@@ -23,12 +24,15 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const { data } = await updateTask(task._id, { ...form, assignedTo: form.assignedTo || null });
       onUpdated(data);
       onClose();
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to update task');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -83,9 +87,9 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
               className="px-5 py-2.5 bg-bg-input text-text-muted border border-border rounded-lg text-sm font-medium cursor-pointer hover:bg-bg-hover hover:text-text-primary transition-all font-sans">
               Cancel
             </button>
-            <button type="submit"
-              className="px-5 py-2.5 rounded-lg text-sm font-semibold text-white cursor-pointer btn-gradient border-none font-sans">
-              Save Changes
+            <button type="submit" disabled={isSubmitting}
+              className={`px-5 py-2.5 rounded-lg text-sm font-semibold text-white btn-gradient border-none font-sans ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}>
+              {isSubmitting ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
         </form>
