@@ -1,4 +1,4 @@
-﻿import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext(null);
 
@@ -14,7 +14,19 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    if (user && user.token) {
+      try {
+        await fetch('http://localhost:5000/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${user.token}`
+          }
+        });
+      } catch (error) {
+        console.error('Logout API call failed', error);
+      }
+    }
     localStorage.removeItem('user');
     setUser(null);
   };
