@@ -1,9 +1,10 @@
-﻿import { reviewSubmission } from '../../api/submissions';
+import { reviewSubmission } from '../../api/submissions';
 
 const REVIEW_STATUS_CLASS = {
   Pending:  'status-badge-Submitted',
   Approved: 'status-badge-Approved',
   Rejected: 'status-badge-Rejected',
+  Revision: 'status-badge-Revision',
 };
 
 const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
@@ -108,6 +109,10 @@ const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
             <button onClick={() => handleReview('Rejected')}
               className="flex-1 py-2.5 bg-danger/10 text-danger border border-danger/30 rounded-lg text-sm font-semibold cursor-pointer hover:bg-danger/20 transition-all font-sans">
               ✕ Reject
+            </button>
+            <button onClick={() => handleReview('Revision')}
+              className="flex-1 py-2.5 bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-lg text-sm font-semibold cursor-pointer hover:bg-purple-500/20 transition-all font-sans">
+              ↻ Request Revision
             </button>
             <button onClick={() => handleReview('Approved')}
               className="flex-1 py-2.5 bg-success/10 text-success border border-success/30 rounded-lg text-sm font-semibold cursor-pointer hover:bg-success/20 transition-all font-sans">
