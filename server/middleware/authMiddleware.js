@@ -1,4 +1,4 @@
-﻿const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const protect = async (req, res, next) => {
   let token;
@@ -26,4 +26,12 @@ const adminOnly = (req, res, next) => {
   }
 };
 
-module.exports = { protect, adminOnly };
+const talentOnly = (req, res, next) => {
+  if (req.user && req.user.role === 'Talent') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Access denied: Talents only' });
+  }
+};
+
+module.exports = { protect, adminOnly, talentOnly };

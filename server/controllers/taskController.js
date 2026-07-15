@@ -1,4 +1,21 @@
-﻿const Task = require('../models/Task');
+//const Task = require('../models/Task');
+const Task = require('../models/Task');
+const User = require('../models/User');
+const mongoose = require('mongoose');
+
+const validateAssignedTo = async (assignedTo) => {
+  if (!mongoose.Types.ObjectId.isValid(assignedTo)) {
+    return { error: 'Invalid user ID format', status: 400 };
+  }
+  const user = await User.findById(assignedTo);
+  if (!user) {
+    return { error: 'Assigned user not found', status: 404 };
+  }
+  if (user.role !== 'Talent') {
+    return { error: 'Tasks can only be assigned to Talent users', status: 400 };
+  }
+  return null;
+};
 
 // @desc  Get all tasks
 // @route GET /api/tasks
@@ -41,6 +58,13 @@ const createTask = async (req, res) => {
   const { title, description, status, assignedTo, dueDate } = req.body;
 
   try {
+    if (assignedTo && assignedTo !== '') {
+      const validationError = await validateAssignedTo(assignedTo);
+      if (validationError) {
+        return res.status(validationError.status).json({ message: validationError.error });
+      }
+    }
+
     const task = await Task.create({
       title,
       description,
@@ -62,8 +86,22 @@ const createTask = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
-    if (!task) return res.status(404).json({ message: 'Task not found' });
-    // including internal fields like createdBy or __v
+
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+
+    if (req.body.assignedTo !== undefined) {
+      if (req.body.assignedTo === '') {
+        req.body.assignedTo = null;
+      } else if (req.body.assignedTo !== null) {
+        const validationError = await validateAssignedTo(req.body.assignedTo);
+        if (validationError) {
+          return res.status(validationError.status).json({ message: validationError.error });
+        }
+      }
+    }
+
     const updated = await Task.findByIdAndUpdate(
       req.params.id,
       { ...req.body },
