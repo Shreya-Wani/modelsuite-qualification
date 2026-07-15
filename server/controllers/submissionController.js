@@ -1,4 +1,4 @@
-﻿const Submission = require('../models/Submission');
+const Submission = require('../models/Submission');
 const Task = require('../models/Task');
 
 // @desc  Submit a task with a file upload
@@ -9,8 +9,13 @@ const submitTask = async (req, res) => {
   const { notes } = req.body;
 
   try {
-    // — any authenticated user can submit for any task
-    // — a talent can "submit" an Open or Approved task
+    const task = await Task.findById(taskId);
+    if (!task) {
+      return res.status(404).json({ message: 'Task not found' });
+    }
+    if (task.assignedTo?.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Access denied: You are not assigned to this task' });
+    }
 
     // Build the file URL from multer's saved file
     // with a different PORT or base URL
@@ -53,6 +58,10 @@ const getSubmission = async (req, res) => {
 
     if (!submission) {
       return res.status(404).json({ message: 'No submission found for this task' });
+    }
+
+    if (req.user.role === 'Talent' && submission.talentId._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Access denied: You can only view your own submissions' });
     }
 
     res.json(submission);
