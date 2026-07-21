@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { submitTask } from '../../api/submissions';
+import { Spinner } from '../Spinner';
 
 const SubmitTaskModal = ({ task, onClose, onSubmitted }) => {
   const [file, setFile]   = useState(null);
@@ -88,7 +89,9 @@ const SubmitTaskModal = ({ task, onClose, onSubmitted }) => {
             </button>
             <button type="submit" disabled={isSubmitting}
               className={`px-5 py-2.5 rounded-lg text-sm font-semibold text-white btn-gradient border-none font-sans ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}>
-              {isSubmitting ? 'Submitting...' : 'Submit Task'}
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2"><Spinner /> Submitting...</span>
+              ) : 'Submit Task'}
             </button>
           </div>
         </form>

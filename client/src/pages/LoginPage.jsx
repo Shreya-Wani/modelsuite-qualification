@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/auth-context';
 import API from '../api/axios';
+import { Spinner } from '../components/Spinner';
 
 const Logo = () => (
   <img src="/modelsuite-talents.png" alt="ModelSuite Talents Logo" className="w-80 h-auto object-contain mx-auto block hover:scale-105 transition-transform duration-300" />
@@ -59,7 +60,9 @@ const LoginPage = () => {
 
           <button type="submit" disabled={isSubmitting}
             className={`mt-1.5 w-full py-3.5 rounded-[10px] text-[15px] font-semibold text-white btn-gradient border-none transition-transform duration-200 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02] active:scale-[0.98]'}`}>
-            {isSubmitting ? 'Signing In...' : 'Sign In'}
+            {isSubmitting ? (
+              <span className="flex items-center justify-center gap-2"><Spinner /> Signing In...</span>
+            ) : 'Sign In'}
           </button>
         </form>
 

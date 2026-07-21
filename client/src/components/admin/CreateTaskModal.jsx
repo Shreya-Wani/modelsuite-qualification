@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createTask, fetchTalents } from '../../api/tasks';
+import { Spinner } from '../Spinner';
 
 const STATUS_OPTIONS = ['Open', 'Claimed', 'Submitted', 'Approved', 'Rejected'];
 
@@ -96,7 +97,9 @@ const CreateTaskModal = ({ onClose, onCreated }) => {
             </button>
             <button type="submit" disabled={isSubmitting}
               className={`px-5 py-2.5 rounded-lg text-sm font-semibold text-white btn-gradient border-none font-sans ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}>
-              {isSubmitting ? 'Creating...' : 'Create Task'}
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2"><Spinner /> Creating...</span>
+              ) : 'Create Task'}
             </button>
           </div>
         </form>

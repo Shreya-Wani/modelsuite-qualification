@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { updateTask, fetchTalents } from '../../api/tasks';
+import { Spinner } from '../Spinner';
 
 const STATUS_OPTIONS = ['Open', 'Claimed', 'Submitted', 'Approved', 'Rejected'];
 const inputCls = 'w-full bg-bg-input border border-border rounded-lg px-3.5 py-2.5 text-sm text-text-primary outline-none placeholder:text-[#4e4a6e] focus:border-primary focus:ring-[3px] focus:ring-primary/15 transition-all font-sans resize-y';
@@ -89,7 +90,9 @@ const EditTaskModal = ({ task, onClose, onUpdated }) => {
             </button>
             <button type="submit" disabled={isSubmitting}
               className={`px-5 py-2.5 rounded-lg text-sm font-semibold text-white btn-gradient border-none font-sans ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}>
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2"><Spinner /> Saving...</span>
+              ) : 'Save Changes'}
             </button>
           </div>
         </form>

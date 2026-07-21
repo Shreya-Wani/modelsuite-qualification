@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { reviewSubmission } from '../../api/submissions';
+import { Spinner } from '../Spinner';
 
 const REVIEW_STATUS_CLASS = {
   Pending:  'status-badge-Submitted',
@@ -113,15 +114,21 @@ const SubmissionReviewModal = ({ submission, onClose, onReviewed }) => {
             </button>
             <button onClick={() => handleReview('Rejected')} disabled={isReviewing}
               className={`flex-1 py-2.5 bg-danger/10 text-danger border border-danger/30 rounded-lg text-sm font-semibold transition-all font-sans ${isReviewing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-danger/20'}`}>
-              ✕ Reject
+              {isReviewing ? (
+                <span className="flex items-center justify-center gap-2"><Spinner /> Processing...</span>
+              ) : '✕ Reject'}
             </button>
             <button onClick={() => handleReview('Revision')} disabled={isReviewing}
               className={`flex-1 py-2.5 bg-purple-500/10 text-purple-400 border border-purple-500/30 rounded-lg text-sm font-semibold transition-all font-sans ${isReviewing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-purple-500/20'}`}>
-              ↻ Request Revision
+              {isReviewing ? (
+                <span className="flex items-center justify-center gap-2"><Spinner /> Processing...</span>
+              ) : '↻ Request Revision'}
             </button>
             <button onClick={() => handleReview('Approved')} disabled={isReviewing}
               className={`flex-1 py-2.5 bg-success/10 text-success border border-success/30 rounded-lg text-sm font-semibold transition-all font-sans ${isReviewing ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:bg-success/20'}`}>
-              ✓ Approve
+              {isReviewing ? (
+                <span className="flex items-center justify-center gap-2"><Spinner /> Processing...</span>
+              ) : '✓ Approve'}
             </button>
           </div>
         </div>
