@@ -12,7 +12,7 @@ module.exports = {
       jsx: true,
     },
   },
-  extends: ['eslint:recommended', 'plugin:react-hooks/recommended'],
+  extends: ['eslint:recommended', 'plugin:react/recommended', 'plugin:react/jsx-runtime', 'plugin:react-hooks/recommended'],
   plugins: ['react-hooks', 'react'],
   rules: {
     'react/react-in-jsx-scope': 'off'
